@@ -41,7 +41,7 @@ public class PermissionsController
 		if (permissionsFile.exists())
 			loadPermissions(permissionsFile);
 		else
-		{}
+			createDefaultConfigFile();
 	}
 	
 	public void	loadPermissions(File permissionsFile)
@@ -132,5 +132,34 @@ public class PermissionsController
 	    {
 	    	e.printStackTrace();
 	    }
+	}
+
+	private void	createDefaultConfigFile()
+	{
+		this.yamlPerms = new YamlPermissions();
+		
+		Map			groups = this.yamlPerms.getGroups();
+		YamlGroup	guest = new YamlGroup();
+		guest.setDefault(true);
+		guest.setPrefix("Guest]");
+		guest.setRank(1000);
+		groups.put("guest", guest);
+		YamlGroup	member = new YamlGroup();
+		member.setPrefix("[Member]");
+		member.setRank(999);
+		member.getPermissions().add("example.permission");
+		member.getPermissions().add("-example.permission.negative");
+		groups.put("member", member);
+		YamlGroup	admin = new YamlGroup();
+		admin.setPrefix("[Admin]");
+		admin.setRank(1);
+		admin.getPermissions().add("*");
+		groups.put("admin", admin);
+		
+		Map 		users = this.yamlPerms.getUsers();
+		YamlUser	notch = new YamlUser();
+		notch.setGroup("guest");
+		users.put("notch", notch);
+		saveToYaml();
 	}
 }

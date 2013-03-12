@@ -30,11 +30,5 @@ public class UPermissions
 		this.debug = config.get("Settings", "debug", false).getBoolean(false);
 		config.save();
 		this.permController = new PermissionsController();
-		// LOADING CONFIG
-		// LOADING/CREATING PERMISSIONS
 	}
-	
-	@ServerStarting
-	public void	serverStarting(FMLServerStartingEvent event)
-	{}
 }
