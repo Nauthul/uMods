@@ -93,8 +93,8 @@ public class CommanduPerm extends CommandBase
 			{}
 			else if (var2[0].equalsIgnoreCase("hierarchy"))
 			{
-				List<String>	groups = UPermissions.instance.permController.getFormatedGroups();
-				for (String line : groups)
+				List<String>	hierarchy = UPermissions.instance.permController.getFormatedHierarchy();
+				for (String line : hierarchy)
 					var1.sendChatToPlayer(line);
 			}
 		}

@@ -5,18 +5,18 @@ import java.util.List;
 
 public class YamlUser
 {
-	private String	group;
-	private List	permissions = new ArrayList();
+	private String			group;
+	private List<String>	permissions = new ArrayList<String>();
 	
-	public String	getGroup()
+	public String		getGroup()
 	{ return this.group; }
 	
-	public void	setGroup(String group)
+	public void			setGroup(String group)
 	{ this.group = group; }
 	
-	public List	getPermissions()
+	public List<String>	getPermissions()
 	{ return this.permissions; }
 	
-	public void	serPermissions(List permissions)
+	public void			serPermissions(List<String> permissions)
 	{ this.permissions = permissions; }
 }

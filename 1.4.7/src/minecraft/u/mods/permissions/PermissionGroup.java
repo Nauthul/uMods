@@ -1,16 +1,14 @@
 package u.mods.permissions;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-
-import u.mods.permissions.yaml.YamlGroup;
-import u.mods.permissions.yaml.YamlUser;
-
-public class PermissionGroup
+public class PermissionGroup extends PermissionAbstract
 {
-	public HashMap<String, Boolean>	permissions;
-	public List<String>				inheritance;
+	private boolean	isDefault = false;
+	private int		rank = 0;
+	private String	prefix = "";
+
+	/*
+	public HashMap<String, Boolean>	permissions = new LinkedHashMap<String, Boolean>();
+	public List<String>				inheritance = new ArrayList<String>();
 	
 	public	PermissionGroup(YamlGroup group)
 	{
@@ -53,4 +51,5 @@ public class PermissionGroup
 			this.permissions.put(perm, value);
 		}
 	}
+	*/
 }

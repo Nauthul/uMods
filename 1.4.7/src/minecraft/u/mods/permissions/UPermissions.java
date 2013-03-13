@@ -1,5 +1,10 @@
 package u.mods.permissions;
 
+import u.mods.permissions.command.CommanduPerm;
+import net.minecraft.command.ICommandManager;
+import net.minecraft.command.ServerCommandManager;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -20,8 +25,11 @@ public class UPermissions
 	@Instance("uPermissions")
 	public static UPermissions	instance;
 	
+	public static PermissionsController	getController()
+	{ return UPermissions.instance.permController; }
+	
 	@PreInit
-	public void	preInit(FMLPreInitializationEvent event)
+	public void							preInit(FMLPreInitializationEvent event)
 	{
 		Configuration	config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -30,5 +38,14 @@ public class UPermissions
 		this.debug = config.get("Settings", "debug", false).getBoolean(false);
 		config.save();
 		this.permController = new PermissionsController();
+	}
+	
+	@ServerStarting
+	public void 							serverStarting(FMLServerStartingEvent event)
+	{
+		MinecraftServer	server = ModLoader.getMinecraftServerInstance();
+		ICommandManager commandManager = server.getCommandManager();
+    	ServerCommandManager serverCommandManager = (ServerCommandManager)commandManager;
+    	serverCommandManager.registerCommand(new CommanduPerm());
 	}
 }

@@ -40,6 +40,8 @@ public class PermissionsController
 	private HashMap<String, PermissionGroup>	userPermissions;
 	private HashMap<String, String>				userGroup;
 	private TreeMap<Integer, String>			groupsLadder;
+	private String								defaultGroup;
+	private File								permissionsFile;
 	private YamlPermissions						yamlPerms;
 
 	public	PermissionsController()
@@ -62,9 +64,19 @@ public class PermissionsController
 		else
 			createDefaultConfigFile();
 	}
+	
+	private void			initialize()
+	{
+		this.groupPermissions = new HashMap();
+		this.userPermissions = new HashMap();
+		this.userGroup = new HashMap();
+		this.groupsLadder = new TreeMap();
+		this.defaultGroup = "";
+		this.permissionsFile = new File(Loader.instance().getConfigDir(), "permissions.yml");
+	}
 
-	public List<String>		getHierarchy()
-	{}
+//	public List<String>		getHierarchy()
+//	{}
 	/*
 	 *  Users Management
 	 */
@@ -72,8 +84,8 @@ public class PermissionsController
 	{}
 	public void 			delUser(String user) throws Exception
 	{}
-	public List<String> 	listUsers()
-	{}
+//	public List<String> 	listUsers()
+//	{}
 	
 	/*
 	 *  Users Permissions Management
@@ -82,16 +94,16 @@ public class PermissionsController
 	{}
 	public void 			delUserPerm(String user, String permission) throws Exception
 	{}
-	public boolean 			checkUserPerm(String user, String permission)
-	{}
-	public List<String> 	listUserPerms(String user)
-	{}
+//	public boolean 			checkUserPerm(String user, String permission)
+//	{}
+//	public List<String> 	listUserPerms(String user)
+//	{}
 	
 	/*
 	 *  Users Group Management
 	 */
-	public String 			getUserGroup(String user)
-	{}
+//	public String 			getUserGroup(String user)
+//	{}
 	public void 			setUserGroup(String user, String group) throws Exception
 	{}
 	
@@ -102,8 +114,8 @@ public class PermissionsController
 	{}
 	public void 			delGroup(String group) throws Exception
 	{}
-	public List<String> 	listGroups()
-	{}
+//	public List<String> 	listGroups()
+//	{}
 	
 	/*
 	 *  Groups Permissions Management
@@ -112,26 +124,26 @@ public class PermissionsController
 	{}
 	public void 			delGroupPerm(String group, String permission) throws Exception
 	{}
-	public boolean 			checkGroupPerm(String group, String permission)
-	{}
-	public List<String> 	listGroupPerms(String group)
-	{}
+//	public boolean 			checkGroupPerm(String group, String permission)
+//	{}
+//	public List<String> 	listGroupPerms(String group)
+//	{}
 	
 	/*
 	 *  Group Management
 	 */
-	public List<String> 	listGroupUsers(String group)
-	{}
-	public String 			getGroupPrefix(String group) throws Exception
-	{}
+//	public List<String> 	listGroupUsers(String group)
+//	{}
+//	public String 			getGroupPrefix(String group) throws Exception
+//	{}
 	public void 			setGroupPrefix(String group, String prefix) throws Exception
 	{}
-	public int 				getGroupRank(String group) throws Exception
-	{}
+//	public int 				getGroupRank(String group) throws Exception
+//	{}
 	public void 			setGroupRank(String group, int rank) throws Exception
 	{}
-	public String 			getDefaultGroup() throws Exception
-	{}
+//	public String 			getDefaultGroup() throws Exception
+//	{}
 	public void 			setDefaultGroup(String group) throws Exception
 	{}
 	
@@ -142,8 +154,8 @@ public class PermissionsController
 	{}
 	public void 			demote(String user) throws Exception
 	{}
-	public List<String> 	getLadder()
-	{}
+//	public List<String> 	getLadder()
+//	{}
 	
 	
 	
@@ -178,7 +190,7 @@ public class PermissionsController
 		users.add("users:");
 		for (String name : this.userGroup.keySet())
 		{
-			users.add(" " + name + " " + "§2" + "[" + this.userGroup.get(name) + "]" + "§f");
+			users.add(" " + name + " " + "\u00a72" + "[" + this.userGroup.get(name) + "]");
 		}
 		
 		return users;
@@ -192,7 +204,7 @@ public class PermissionsController
 		{
 			String inheritance = "[";
 			int count = 0;
-			for (String i : this.userPermissions.get(name).inheritance)
+			for (String i : this.groupPermissions.get(name).inheritance)
 			{
 				if (count != 0)
 					inheritance += ", ";
@@ -200,7 +212,7 @@ public class PermissionsController
 			}
 			inheritance += "]";
 			String rank = String.valueOf(((YamlGroup)this.yamlPerms.getGroups().get(name)).getRank());
-			groups.add(" " + name + " (rank: " + rank + ") " + "§2" + inheritance + "§f");			
+			groups.add(" " + name + " (rank: " + rank + ") " + "\u00a72" + inheritance);			
 		}
 		return groups;
 	}
@@ -225,7 +237,8 @@ public class PermissionsController
 				
 				if (this.groupsLadder.lowerKey(key) == null)
 					c = false;
-				key = this.groupsLadder.lowerKey(key);
+				else
+					key = this.groupsLadder.lowerKey(key);
 			}
 			while (c);
 		}
@@ -286,6 +299,7 @@ public class PermissionsController
 		{
 			YamlUser u = users.get(name);
 			this.userPermissions.put(name, new PermissionGroup(u));
+			this.userGroup.put(name, u.getGroup());
 		}
 	}
 	
