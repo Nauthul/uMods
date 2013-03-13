@@ -6,10 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+
+import net.minecraft.server.MinecraftServer;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.TypeDescription;
@@ -30,25 +36,257 @@ import u.mods.permissions.yaml.YamlUser;
 
 public class PermissionsController
 {
-	private HashMap	groupsPermissions = new HashMap();
-	private HashMap usersGroups = new HashMap();
-	private HashMap userPermissions = new HashMap();
-	private YamlPermissions	yamlPerms;
+	private HashMap<String, PermissionGroup>	groupPermissions;
+	private HashMap<String, PermissionGroup>	userPermissions;
+	private HashMap<String, String>				userGroup;
+	private TreeMap<Integer, String>			groupsLadder;
+	private YamlPermissions						yamlPerms;
 
-	public PermissionsController()
+	public	PermissionsController()
 	{
+		this.reload();
+	}
+
+	/*
+	 *  General Commands
+	 */
+	public void				reload()
+	{
+		this.groupPermissions = new HashMap();
+		this.userPermissions = new HashMap();
+		this.userGroup = new HashMap();
+		this.groupsLadder = new TreeMap();
 		File permissionsFile = new File(Loader.instance().getConfigDir(), "permissions.yml");
 		if (permissionsFile.exists())
 			loadPermissions(permissionsFile);
 		else
 			createDefaultConfigFile();
 	}
+
+	public List<String>		getHierarchy()
+	{}
+	/*
+	 *  Users Management
+	 */
+	public void 			addUser(String user) throws Exception
+	{}
+	public void 			delUser(String user) throws Exception
+	{}
+	public List<String> 	listUsers()
+	{}
 	
-	public void	loadPermissions(File permissionsFile)
+	/*
+	 *  Users Permissions Management
+	 */
+	public void 			addUserPerm(String user, String permission) throws Exception
+	{}
+	public void 			delUserPerm(String user, String permission) throws Exception
+	{}
+	public boolean 			checkUserPerm(String user, String permission)
+	{}
+	public List<String> 	listUserPerms(String user)
+	{}
+	
+	/*
+	 *  Users Group Management
+	 */
+	public String 			getUserGroup(String user)
+	{}
+	public void 			setUserGroup(String user, String group) throws Exception
+	{}
+	
+	/*
+	 *  Groups Management
+	 */
+	public void 			addGroup(String group) throws Exception
+	{}
+	public void 			delGroup(String group) throws Exception
+	{}
+	public List<String> 	listGroups()
+	{}
+	
+	/*
+	 *  Groups Permissions Management
+	 */
+	public void 			addGroupPerm(String group, String permission) throws Exception
+	{}
+	public void 			delGroupPerm(String group, String permission) throws Exception
+	{}
+	public boolean 			checkGroupPerm(String group, String permission)
+	{}
+	public List<String> 	listGroupPerms(String group)
+	{}
+	
+	/*
+	 *  Group Management
+	 */
+	public List<String> 	listGroupUsers(String group)
+	{}
+	public String 			getGroupPrefix(String group) throws Exception
+	{}
+	public void 			setGroupPrefix(String group, String prefix) throws Exception
+	{}
+	public int 				getGroupRank(String group) throws Exception
+	{}
+	public void 			setGroupRank(String group, int rank) throws Exception
+	{}
+	public String 			getDefaultGroup() throws Exception
+	{}
+	public void 			setDefaultGroup(String group) throws Exception
+	{}
+	
+	/*
+	 *  Ladder Management
+	 */
+	public void 			promote(String user) throws Exception
+	{}
+	public void 			demote(String user) throws Exception
+	{}
+	public List<String> 	getLadder()
+	{}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/*
+ * 	
+ */
+	public List<String>	getFormatedUsers()
+	{
+		List<String>	users = new ArrayList();
+		
+		users.add("users:");
+		for (String name : this.userGroup.keySet())
+		{
+			users.add(" " + name + " " + "§2" + "[" + this.userGroup.get(name) + "]" + "§f");
+		}
+		
+		return users;
+	}
+
+	public List<String>	getFormatedGroups()
+	{
+		List<String>	groups = new ArrayList();
+		groups.add("groups:");
+		for (String name : this.groupPermissions.keySet())
+		{
+			String inheritance = "[";
+			int count = 0;
+			for (String i : this.userPermissions.get(name).inheritance)
+			{
+				if (count != 0)
+					inheritance += ", ";
+				inheritance += i;
+			}
+			inheritance += "]";
+			String rank = String.valueOf(((YamlGroup)this.yamlPerms.getGroups().get(name)).getRank());
+			groups.add(" " + name + " (rank: " + rank + ") " + "§2" + inheritance + "§f");			
+		}
+		return groups;
+	}
+	
+	public List	getFormatedHierarchy()
+	{
+		List<String>	hierarchy = new ArrayList();
+		
+		if (this.groupsLadder.size() > 0)
+		{
+			int key = this.groupsLadder.lastKey();
+			boolean c = true;
+			do {
+				String name = this.groupsLadder.get(key);
+				hierarchy.add("- " + name + ":");
+				
+				for (String uname : this.userGroup.keySet())
+				{
+					if (this.userGroup.get(uname).equals(name))
+						hierarchy.add(" + " + uname);
+				}
+				
+				if (this.groupsLadder.lowerKey(key) == null)
+					c = false;
+				key = this.groupsLadder.lowerKey(key);
+			}
+			while (c);
+		}
+		return hierarchy;
+	}
+	
+	
+	
+	/*
+	 *  Permissions Check
+	 */
+	
+	public boolean			hasPermission(String user, String permission)
+	{
+		if (isOp(user))
+			return true;
+		if (this.userPermissions.containsKey(user) && this.userPermissions.get(user).hasPermission(permission))
+			return true;
+		if (this.userGroup.containsKey(user) && hasGroupPermission(this.userGroup.get(user), permission))
+			return true;
+		return false;
+	}
+	
+	public boolean			hasGroupPermission(String group, String permission)
+	{
+		if (this.groupPermissions.containsKey(group))
+			return this.groupPermissions.get(group).hasPermission(permission);
+		return false;
+	}
+	
+	private boolean			isOp(String user)
+	{
+		if (!UPermissions.instance.allowOps)
+			return false;
+		MinecraftServer	server = MinecraftServer.getServer();
+		return ((server != null) && (server.getConfigurationManager().getOps().contains(user)));
+	}
+
+	/*
+	 *  Configuration Management
+	 */
+	
+	public void				loadPermissions(File permissionsFile)
 	{
 		this.yamlPerms = loadFromYaml(permissionsFile);
-		//for (String name : this.yamlPerms.getGroups().keySet())
-		//{}
+		
+		LinkedHashMap<String, YamlGroup> groups = (LinkedHashMap<String, YamlGroup>)this.yamlPerms.getGroups();
+		for (String name : groups.keySet())
+		{
+			YamlGroup g = groups.get(name);
+			this.groupPermissions.put(name, new PermissionGroup(g));
+			if (g.getRank() > 0)
+				groupsLadder.put(g.getRank(), name);
+		}
+		
+		LinkedHashMap<String, YamlUser> users = (LinkedHashMap<String, YamlUser>)this.yamlPerms.getUsers();
+		for (String name : users.keySet())
+		{
+			YamlUser u = users.get(name);
+			this.userPermissions.put(name, new PermissionGroup(u));
+		}
 	}
 	
 	private YamlPermissions	loadFromYaml(File permissionsFile)
@@ -84,13 +322,12 @@ public class PermissionsController
 		return null;
 	}
 	
-	public void	savePermissions()
+	public void				savePermissions()
 	{
-		//FileWriter fstream = new FileWriter("outPerm.txt");
-				//yaml.dump(p, fstream);
+		saveToYaml();
 	}
 	
-	private void	saveToYaml()
+	private void			saveToYaml()
 	{
 		Constructor	constructor = new Constructor(YamlPermissions.class);
 		
@@ -134,14 +371,14 @@ public class PermissionsController
 	    }
 	}
 
-	private void	createDefaultConfigFile()
+	private void			createDefaultConfigFile()
 	{
 		this.yamlPerms = new YamlPermissions();
 		
 		Map			groups = this.yamlPerms.getGroups();
 		YamlGroup	guest = new YamlGroup();
 		guest.setDefault(true);
-		guest.setPrefix("Guest]");
+		guest.setPrefix("[Guest]");
 		guest.setRank(1000);
 		groups.put("guest", guest);
 		YamlGroup	member = new YamlGroup();
