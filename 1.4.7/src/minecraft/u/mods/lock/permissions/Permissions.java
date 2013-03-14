@@ -1,4 +1,4 @@
-package ulthu.ulock.permissions;
+package u.mods.lock.permissions;
 
 public class Permissions implements PersissionsInterface {
 

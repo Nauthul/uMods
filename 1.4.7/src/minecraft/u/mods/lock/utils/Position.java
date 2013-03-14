@@ -1,4 +1,4 @@
-package ulthu.ulock.utils;
+package u.mods.lock.utils;
 
 public class Position {
 

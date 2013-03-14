@@ -1,4 +1,4 @@
-package ulthu.ulock.protect;
+package u.mods.lock.protect;
 
 import java.security.acl.Permission;
 import java.util.HashSet;
@@ -12,9 +12,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.ForgeDummyContainer;
 
-import ulthu.ulock.ULock;
-import ulthu.ulock.permissions.Permissions;
-import ulthu.ulock.utils.BlockFace;
+import u.mods.lock.ULock;
+import u.mods.lock.permissions.Permissions;
+import u.mods.lock.utils.BlockFace;
 
 public class ProtectedItem
 {

@@ -1,4 +1,4 @@
-package ulthu.ulock.utils;
+package u.mods.lock.utils;
 
 import net.minecraftforge.common.ForgeDirection;
 

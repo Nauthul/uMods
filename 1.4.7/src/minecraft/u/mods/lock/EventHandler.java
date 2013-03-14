@@ -1,9 +1,9 @@
-package ulthu.ulock;
+package u.mods.lock;
 
-import ulthu.ulock.permissions.Permissions;
-import ulthu.ulock.protect.ProtectedItem;
-import ulthu.ulock.utils.BlockFace;
-import ulthu.ulock.utils.Position;
+import u.mods.lock.permissions.Permissions;
+import u.mods.lock.protect.ProtectedItem;
+import u.mods.lock.utils.BlockFace;
+import u.mods.lock.utils.Position;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.dispenser.PositionImpl;
@@ -124,7 +124,8 @@ public class EventHandler {
 				{
 					event.setCanceled(true);
 					event.entityPlayer.sendChatToPlayer(ULock.instance.actionPermission);
-					//
+					/*
+					 * TEST
 					if (event.entityPlayer instanceof EntityPlayerMP)
 					{
 						EntityPlayerMP epm = (EntityPlayerMP)event.entityPlayer;
@@ -132,7 +133,7 @@ public class EventHandler {
 						epm.playerNetServerHandler.sendPacketToPlayer(new Packet53BlockChange(event.x, event.y, event.z, epm.worldObj));
 						event.entityPlayer.sendChatToPlayer("Packet Sent");
 					}
-					//
+					*/
 				}
 			}
 		}

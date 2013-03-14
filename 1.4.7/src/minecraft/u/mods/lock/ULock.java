@@ -1,8 +1,8 @@
-package ulthu.ulock;
+package u.mods.lock;
 
 import java.util.HashMap;
 
-import ulthu.ulock.utils.Position;
+import u.mods.lock.utils.Position;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +23,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid="uLock", name="uLock", version="13.3.10")
+@Mod(modid="uLock", name="uLock", version="1.0")
 @NetworkMod(clientSideRequired=false, serverSideRequired=true)
 public class ULock {
 	
@@ -49,19 +49,12 @@ public class ULock {
 		this.debug = config.get("Config", "debug", false).getBoolean(false);
 		this.actionPermission = config.get("Messages", "actionPermission", "You don't have permission to perform this action.").value;
 		this.actionSelection = config.get("Messages", "actionSelection", "This sign has been selected for edition.").value;
-		//this.var = config.get("Messages", "Var", true).getBoolean(true);
 		config.save();
 		this.selectedSigns = new HashMap<String, Position>();
     }
-    
-    @Init
-    public void load(FMLInitializationEvent event) {
-    	// Stub Method
-    }
-    
+
     @PostInit
     public void postInit(FMLPostInitializationEvent event) {
-    	// Stub Method
     	MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
     
@@ -71,16 +64,6 @@ public class ULock {
     	server = ModLoader.getMinecraftServerInstance();
     	ICommandManager commandManager = server.getCommandManager();
     	ServerCommandManager serverCommandManager = (ServerCommandManager)commandManager;
-    	addCommands(serverCommandManager);
     }
-    
-    @ServerStopping
-    public void serverStopping(FMLServerStoppingEvent event) {
-    	// Stub Method
-    }
-    
-    public void addCommands(ServerCommandManager manager) {
-    	//manager.registerCommand(new CommanduLock());
-    }
-    
+ 
 }
