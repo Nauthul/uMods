@@ -19,6 +19,9 @@ public abstract class PermissionAbstract
 	public	String						getName()
 	{ return this.name; }
 	
+	public	List<String>				getInheritance()
+	{ return this.inheritance; }
+	
 	public boolean						hasPermission(String permission) throws PermissionNotFoundException
 	{
 		boolean	result = false;
@@ -38,6 +41,8 @@ public abstract class PermissionAbstract
 			return this.cachedPermissions.get(permission);
 		for (String key : this.permissions.keySet())
 		{
+			if (key.equals("*"))
+				return true;
 			if (permission.matches(key))
 			{
 				this.cachedPermissions.put(permission, this.permissions.get(key));
@@ -65,16 +70,21 @@ public abstract class PermissionAbstract
 		HashMap<String, Boolean>	perms = new LinkedHashMap<String, Boolean>();
 		for (String p : permissions)
 		{
-			boolean	value = true;
-			if (p.startsWith("-"))
-			{
-				value = false;
-				p = p.substring(1);
-			}
-			if (perms.containsKey(p))
-				FMLLog.warning("[uPermissions] Permission redundancy detected.");
+			if (p.startsWith("*") && p.length() > 1)
+				System.out.println("[uPermissions] Invalid permission node: " + p);
 			else
-				perms.put(p, value);
+			{
+				boolean	value = true;
+				if (p.startsWith("-"))
+				{
+					value = false;
+					p = p.substring(1);
+				}
+				if (perms.containsKey(p))
+					System.out.println("[uPermissions] Redundant permission node: " + p);
+				else
+					perms.put(p, value);
+			}
 		}
 		return perms;
 	}

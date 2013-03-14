@@ -29,6 +29,9 @@ public class PermissionGroup extends PermissionAbstract
 		return group;
 	}
 	
+	public int			getRank()
+	{ return this.rank; }
+	
 	public String		getPrefix()
 	{ return this.prefix; }
 	

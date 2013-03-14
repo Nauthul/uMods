@@ -28,7 +28,6 @@ import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.Loader;
 
 import u.mods.permissions.yaml.YamlGroup;
@@ -58,20 +57,20 @@ public class PermissionsController
 	{
 		if (this.permissionsFile.exists())
 		{
-			FMLLog.info("[uPermissions] Loading permissions from file.");
+			System.out.println("[uPermissions] Loading permissions from file.");
 			loadPermissions();
 		}
 		else
 		{
-			FMLLog.info("[uPermissions] Can't find permissions file, creating default.");
+			System.out.println("[uPermissions] Can't find permissions file, creating default.");
 			createDefaultConfigFile();
 		}
-		FMLLog.info("[uPermissions] Permissions loaded.");
+		System.out.println("[uPermissions] Permissions loaded.");
 	}
 	
 	public void				reload()
 	{
-		FMLLog.info("[uPermissions] Permissions reload requested.");
+		System.out.println("[uPermissions] Permissions reload requested.");
 		initialize();
 		load();
 	}
@@ -100,13 +99,18 @@ public class PermissionsController
 			name = name.toLowerCase();
 			this.groupPermissions.put(name, new PermissionGroup(name, g));
 			if (g.getRank() > 0)
-				groupsLadder.put(g.getRank(), name);
+			{
+				if (this.groupsLadder.containsKey(g.getRank()))
+					System.err.println("[uPermissions] Group rank redundancy detected. Assuming first one.");
+				else
+					groupsLadder.put(g.getRank(), name);
+			}
 			if (g.getDefault())
 			{
 				if (this.defaultGroup.equals(""))
 					this.defaultGroup = name;
 				else
-					FMLLog.warning("[uPermissions] Default group redundancy detected. Assuming first one.");
+					System.err.println("[uPermissions] Default group redundancy detected. Assuming first one.");
 			}
 		}
 		
@@ -116,7 +120,8 @@ public class PermissionsController
 			YamlUser u = users.get(name);
 			name = name.toLowerCase();
 			this.userPermissions.put(name, new PermissionUser(name, u));
-			this.userGroup.put(name, u.getGroup());
+			if (u.getGroup() != null)
+				this.userGroup.put(name, u.getGroup());
 		}
 	}
 	
@@ -166,7 +171,7 @@ public class PermissionsController
 			users.put(name, this.userPermissions.get(name).toYaml());
 		yamlPerms.setUsers(users);
 		
-		FMLLog.info("[uPermissions] Saving permissions to file.");
+		System.out.println("[uPermissions] Saving permissions to file.");
 		saveToYaml(yamlPerms);
 		
 	}
@@ -207,11 +212,11 @@ public class PermissionsController
 	    	BufferedWriter out = new BufferedWriter(new FileWriter(this.permissionsFile));
 	    	out.write(yaml.dumpAsMap(yamlPerms));
 	    	out.close();
-	    	FMLLog.info("[uPermissions] Permissions saved.");
+	    	System.out.println("[uPermissions] Permissions saved.");
 	    }
 	    catch (IOException e)
 	    {
-	    	FMLLog.severe("[uPermissions] Saving failed, unable to write to file!");
+	    	System.err.println("[uPermissions] Saving failed, unable to write to file!");
 	    }
 	}
 
@@ -306,6 +311,9 @@ public class PermissionsController
 	
 	public boolean			hasPermissionThrow(String user, String permission) throws PermissionNotFoundException
 	{
+		user = user.toLowerCase();
+		permission = permission.toLowerCase();
+
 		if (isOp(user))
 			return true;
 		if (this.userPermissions.containsKey(user))
@@ -350,20 +358,40 @@ public class PermissionsController
 	/*
 	 *  Users Management
 	 */
-//	public void 			addUser(String user) throws Exception
+	public String 			addUser(String user)
+	{
+		user = user.toLowerCase();
+		if (this.userPermissions.containsKey(user))
+			return "User already exist.";
+		this.userPermissions.put(user, new PermissionUser(user, new YamlUser()));
+		savePermissions();
+		return "Added user " + user + " to permissions.";
+	}
+
+	//	public void 			delUser(String user) throws Exception
 //	{}
-//	public void 			delUser(String user) throws Exception
-//	{}
-//	public List<String> 	listUsers()
-//	{}
+	
+	public List<String> 	listUsers()
+	{
+		List<String>	users = new ArrayList();
+		
+		users.add("users:");
+		for (String name : this.userGroup.keySet())
+		{
+			users.add(" " + name + " " + "\u00a72" + "[" + this.userGroup.get(name) + "]");
+		}
+		
+		return users;
+	}
 	
 	/*
 	 *  Users Permissions Management
 	 */
-//	public void 			addUserPerm(String user, String permission) throws Exception
+//	public String 			addUserPerm(String user, String permission)
 //	{}
 //	public void 			delUserPerm(String user, String permission) throws Exception
 //	{}
+	
 	public String 			checkUserPerm(String user, String permission)
 	{
 		String res;
@@ -376,16 +404,40 @@ public class PermissionsController
 		res = "Player \"" + user + "\" don't have such permission.";
 		return res;
 	}
+	
 //	public List<String> 	listUserPerms(String user)
-//	{}
+//	{
+//		user = user.toLowerCase();
+//
+//		List<String>	perms = new ArrayList();
+//		perms.add("Permissions for " + user + ":");
+//		if (this.userPermissions.containsKey(user))
+//		{
+//			
+//		}
+//		return perms;
+//	}
 	
 	/*
 	 *  Users Group Management
 	 */
 //	public String 			getUserGroup(String user)
 //	{}
-//	public void 			setUserGroup(String user, String group) throws Exception
-//	{}
+	
+	public String			setUserGroup(String user, String group)
+	{
+		user = user.toLowerCase();
+		group = group.toLowerCase();
+		
+		if (!this.groupPermissions.containsKey(group))
+			return "Group " + group + " does not exist.";
+		if (!this.userPermissions.containsKey(user))
+			addUser(user);
+		this.userPermissions.get(user).setGroup(group);
+		this.userGroup.put(user, group);
+		savePermissions();
+		return "User " + user + " is now a member of the group " + group + ".";
+	}
 	
 	/*
 	 *  Groups Management
@@ -394,8 +446,27 @@ public class PermissionsController
 //	{}
 //	public void 			delGroup(String group) throws Exception
 //	{}
-//	public List<String> 	listGroups()
-//	{}
+	
+	public List<String> 	listGroups()
+	{
+		List<String>	groups = new ArrayList();
+		groups.add("groups:");
+		for (String name : this.groupPermissions.keySet())
+		{
+			String inheritance = "[";
+			int count = 0;
+			for (String i : this.groupPermissions.get(name).getInheritance())
+			{
+				if (count != 0)
+					inheritance += ", ";
+				inheritance += i;
+			}
+			inheritance += "]";
+			String rank = String.valueOf(this.groupPermissions.get(name).getRank());
+			groups.add(" " + name + " (rank: " + rank + ") " + "\u00a72" + inheritance);			
+		}
+		return groups;
+	}
 	
 	/*
 	 *  Groups Permissions Management
@@ -404,8 +475,12 @@ public class PermissionsController
 //	{}
 //	public void 			delGroupPerm(String group, String permission) throws Exception
 //	{}
+	
 	public boolean 			checkGroupPerm(String group, String permission)
 	{
+		group = group.toLowerCase();
+		permission = permission.toLowerCase();
+		
 		if (this.groupPermissions.containsKey(group))
 		{
 			try {
@@ -416,6 +491,7 @@ public class PermissionsController
 		}
 		return false;
 	}
+	
 //	public List<String> 	listGroupPerms(String group)
 //	{}
 	
@@ -426,92 +502,79 @@ public class PermissionsController
 //	{}
 //	public String 			getGroupPrefix(String group) throws Exception
 //	{}
-	public void 			setGroupPrefix(String group, String prefix) throws Exception
-	{}
+//	public void 			setGroupPrefix(String group, String prefix) throws Exception
+//	{}
 //	public int 				getGroupRank(String group) throws Exception
 //	{}
-	public void 			setGroupRank(String group, int rank) throws Exception
-	{}
+//	public void 			setGroupRank(String group, int rank) throws Exception
+//	{}
 //	public String 			getDefaultGroup() throws Exception
 //	{}
-	public void 			setDefaultGroup(String group) throws Exception
-	{}
+//	public void 			setDefaultGroup(String group) throws Exception
+//	{}
 	
 	/*
 	 *  Ladder Management
 	 */
-	public void 			promote(String user) throws Exception
-	{}
-	public void 			demote(String user) throws Exception
-	{}
-//	public List<String> 	getLadder()
-//	{}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-/*
- * 	
- */
-	/*
-	public List<String>	getFormatedUsers()
+	public String 			promote(String user)
 	{
-		List<String>	users = new ArrayList();
-		
-		users.add("users:");
-		for (String name : this.userGroup.keySet())
+		String group = this.defaultGroup;
+		user = user.toLowerCase();
+		if (this.userGroup.containsKey(user))
+			group = this.userGroup.get(user);
+		int rank = 0;
+		if (this.groupPermissions.containsKey(group))
+			rank = this.groupPermissions.get(group).getRank();
+		else
+			return "User group is not valid.";
+		if (rank < 1 || !this.groupsLadder.containsKey(rank) || !this.groupsLadder.get(rank).equals(group))
+			return "User group is not in ladder.";
+		if (this.groupsLadder.lowerKey(rank) != null)
 		{
-			users.add(" " + name + " " + "\u00a72" + "[" + this.userGroup.get(name) + "]");
+			rank = this.groupsLadder.lowerKey(rank);
+			group = this.groupsLadder.get(rank);
+			return "Promotion: " + setUserGroup(user, group);
 		}
-		
-		return users;
-	}
-
-	public List<String>	getFormatedGroups()
-	{
-		List<String>	groups = new ArrayList();
-		groups.add("groups:");
-		for (String name : this.groupPermissions.keySet())
-		{
-			String inheritance = "[";
-			int count = 0;
-			for (String i : this.groupPermissions.get(name).inheritance)
-			{
-				if (count != 0)
-					inheritance += ", ";
-				inheritance += i;
-			}
-			inheritance += "]";
-			String rank = String.valueOf(((YamlGroup)this.yamlPerms.getGroups().get(name)).getRank());
-			groups.add(" " + name + " (rank: " + rank + ") " + "\u00a72" + inheritance);			
-		}
-		return groups;
+		else
+			return "User is already in the top ranked group.";
 	}
 	
-	public List	getFormatedHierarchy()
+	public String 			demote(String user)
+	{
+		user = user.toLowerCase();
+		if (!this.userPermissions.containsKey(user))
+			return "User is not yet registered in permissions.";
+		if (!this.userGroup.containsKey(user) || this.userGroup.get(user) == null)
+			return "User is not in a group.";
+		String group = this.userGroup.get(user);
+		if (!this.groupPermissions.containsKey(group))
+			return "User group is not valid.";
+		int rank = this.groupPermissions.get(group).getRank();
+		if (rank < 1 || !this.groupsLadder.containsKey(rank) || !this.groupsLadder.get(rank).equals(group))
+			return "User group is not in ladder.";
+		if (this.groupsLadder.higherKey(rank) != null)
+		{
+			rank = this.groupsLadder.higherKey(rank);
+			group = this.groupsLadder.get(rank);
+			return "Demotion: " + setUserGroup(user, group);
+		}
+		else
+			return "User is already in the lowest ranked group.";
+		
+	}
+	
+	public List<String> 	getLadder()
+	{
+		List<String>	ladder = new ArrayList();
+		ladder.add("Ladder:");
+		for (int i : this.groupsLadder.keySet())
+			ladder.add("- " + String.valueOf(i) + " - " + this.groupsLadder.get(i));
+		return ladder;
+	}
+	
+	public List<String>		getHierarchy()
 	{
 		List<String>	hierarchy = new ArrayList();
-		
 		if (this.groupsLadder.size() > 0)
 		{
 			int key = this.groupsLadder.lastKey();
@@ -535,12 +598,4 @@ public class PermissionsController
 		}
 		return hierarchy;
 	}
-	*/
-	
-	
-	
-	
-
-	
-
 }

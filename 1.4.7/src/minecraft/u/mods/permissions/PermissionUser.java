@@ -11,6 +11,12 @@ public class PermissionUser extends PermissionAbstract
 		this.permissions = analyzePermissions(user.getPermissions());
 	}
 	
+	public void		setGroup(String group)
+	{
+		this.inheritance.clear();
+		this.inheritance.add(group);
+	}
+	
 	public YamlUser	toYaml()
 	{
 		YamlUser	user = new YamlUser();
