@@ -1,11 +1,33 @@
 package u.mods.permissions;
 
+import u.mods.permissions.yaml.YamlGroup;
+
 public class PermissionGroup extends PermissionAbstract
 {
 	private boolean	isDefault = false;
 	private int		rank = 0;
 	private String	prefix = "";
-
+	
+	public	PermissionGroup(String name, YamlGroup group)
+	{
+		this.name = name;
+		this.isDefault = group.getDefault();
+		this.rank = group.getRank();
+		this.prefix = group.getPrefix();
+		this.inheritance = group.getInheritance();
+		this.permissions = analyzePermissions(group.getPermissions());
+	}
+	
+	public YamlGroup	toYaml()
+	{
+		YamlGroup	group = new YamlGroup();
+		group.setDefault(this.isDefault);
+		group.setPrefix(this.prefix);
+		group.setRank(this.rank);
+		group.setInheritance(this.inheritance);
+		group.setPermissions(this.permissionsToYaml(this.permissions));
+		return group;
+	}
 	/*
 	public HashMap<String, Boolean>	permissions = new LinkedHashMap<String, Boolean>();
 	public List<String>				inheritance = new ArrayList<String>();

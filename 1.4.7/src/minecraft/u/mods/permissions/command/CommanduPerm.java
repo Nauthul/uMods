@@ -17,6 +17,12 @@ public class CommanduPerm extends CommandBase
 	}
 	
 	@Override
+	public int getRequiredPermissionLevel()
+    {
+        return 0;
+    }
+	
+	@Override
 	public void processCommand(ICommandSender var1, String[] var2)
 	{
 		if (var2.length > 0)
@@ -30,15 +36,15 @@ public class CommanduPerm extends CommandBase
 			// Listing Commands
 			else if (var2[0].equalsIgnoreCase("listusers"))
 			{
-				List<String>	users = UPermissions.instance.permController.getFormatedUsers();
-				for (String line : users)
-					var1.sendChatToPlayer(line);
+				//List<String>	users = UPermissions.instance.permController.getFormatedUsers();
+				//for (String line : users)
+				//	var1.sendChatToPlayer(line);
 			}
 			else if (var2[0].equalsIgnoreCase("listgroups"))
 			{
-				List<String>	groups = UPermissions.instance.permController.getFormatedGroups();
-				for (String line : groups)
-					var1.sendChatToPlayer(line);
+				//List<String>	groups = UPermissions.instance.permController.getFormatedGroups();
+				//for (String line : groups)
+				//	var1.sendChatToPlayer(line);
 			}
 			// Specific Listing Commands
 			else if (var2[0].equalsIgnoreCase("listuserperms"))
@@ -48,8 +54,6 @@ public class CommanduPerm extends CommandBase
 			else if (var2[0].equalsIgnoreCase("listgroupsusers"))
 			{}
 			// User Management Commands
-			else if (var2[0].equalsIgnoreCase("adduser"))
-			{}
 			else if (var2[0].equalsIgnoreCase("deluser"))
 			{}
 			else if (var2[0].equalsIgnoreCase("adduserperm"))
@@ -57,7 +61,14 @@ public class CommanduPerm extends CommandBase
 			else if (var2[0].equalsIgnoreCase("deluserperm"))
 			{}
 			else if (var2[0].equalsIgnoreCase("checkuserperm"))
-			{}
+			{
+				if (var2.length == 3)
+				{
+					var1.sendChatToPlayer(String.valueOf(UPermissions.getController().hasPermission(var2[1], var2[2])));
+				}
+				else
+					var1.sendChatToPlayer("Wrong arguments");
+			}
 			else if (var2[0].equalsIgnoreCase("getusergroup"))
 			{}
 			else if (var2[0].equalsIgnoreCase("setusergroup"))
@@ -72,7 +83,9 @@ public class CommanduPerm extends CommandBase
 			else if (var2[0].equalsIgnoreCase("delgroupperm"))
 			{}
 			else if (var2[0].equalsIgnoreCase("checkgroupperm"))
-			{}
+			{
+				
+			}
 			else if (var2[0].equalsIgnoreCase("getgroupprefix"))
 			{}
 			else if (var2[0].equalsIgnoreCase("setgroupprefix"))
@@ -93,14 +106,19 @@ public class CommanduPerm extends CommandBase
 			{}
 			else if (var2[0].equalsIgnoreCase("hierarchy"))
 			{
-				List<String>	hierarchy = UPermissions.instance.permController.getFormatedHierarchy();
-				for (String line : hierarchy)
-					var1.sendChatToPlayer(line);
+				//List<String>	hierarchy = UPermissions.instance.permController.getFormatedHierarchy();
+				//for (String line : hierarchy)
+				//	var1.sendChatToPlayer(line);
 			}
 		}
 		else
 			displayHelp(var1);
 
+	}
+	
+	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
+	{
+		return true;
 	}
 	
 	public void	displayHelp(ICommandSender var1)
