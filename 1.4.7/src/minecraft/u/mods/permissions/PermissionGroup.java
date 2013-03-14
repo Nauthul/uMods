@@ -28,6 +28,10 @@ public class PermissionGroup extends PermissionAbstract
 		group.setPermissions(this.permissionsToYaml(this.permissions));
 		return group;
 	}
+	
+	public String		getPrefix()
+	{ return this.prefix; }
+	
 	/*
 	public HashMap<String, Boolean>	permissions = new LinkedHashMap<String, Boolean>();
 	public List<String>				inheritance = new ArrayList<String>();

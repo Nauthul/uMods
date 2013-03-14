@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import net.minecraft.server.MinecraftServer;
@@ -39,6 +40,7 @@ public class PermissionsController
 	private HashMap<String, PermissionGroup>	groupPermissions;
 	private HashMap<String, PermissionUser>		userPermissions;
 	private HashMap<String, String>				userGroup;
+	private HashMap<String, Boolean>			nativePermissions = new HashMap<String, Boolean>();
 	private TreeMap<Integer, String>			groupsLadder;
 	private String								defaultGroup;
 	private File								permissionsFile;
@@ -95,6 +97,7 @@ public class PermissionsController
 		for (String name : groups.keySet())
 		{
 			YamlGroup g = groups.get(name);
+			name = name.toLowerCase();
 			this.groupPermissions.put(name, new PermissionGroup(name, g));
 			if (g.getRank() > 0)
 				groupsLadder.put(g.getRank(), name);
@@ -111,6 +114,7 @@ public class PermissionsController
 		for (String name : users.keySet())
 		{
 			YamlUser u = users.get(name);
+			name = name.toLowerCase();
 			this.userPermissions.put(name, new PermissionUser(name, u));
 			this.userGroup.put(name, u.getGroup());
 		}
@@ -251,6 +255,41 @@ public class PermissionsController
 		return null;
 	}
 	
+	public Set<String>		getGroups()
+	{ return this.groupPermissions.keySet(); }
+	
+	public String			getGroupPrefix(String group)
+	{
+		if (this.groupPermissions.containsKey(group))
+			return this.groupPermissions.get(group).getPrefix();
+		return "";
+	}
+
+	public String			getUserGroup(String user)
+	{
+		if (this.userGroup.containsKey(user))
+			return this.userGroup.get(user);
+		return this.defaultGroup;
+	}
+	
+	/*
+	 *  Setters
+	 */
+	public void				setNativePermissions(String[] permissions)
+	{
+		for (String perm : permissions)
+		{
+			boolean value = true;
+			if (perm.startsWith("-"))
+			{
+				value = false;
+				perm = perm.substring(1);
+			}
+			if (!this.nativePermissions.containsKey(perm))
+				this.nativePermissions.put(perm, value);
+		}
+	}
+	
 	/*
 	 *  Permissions Check
 	 */
@@ -299,14 +338,7 @@ public class PermissionsController
 		}
 		throw new PermissionNotFoundException();
 	}
-	
-//	public boolean			hasGroupPermission(String group, String permission)
-//	{
-//		if (this.groupPermissions.containsKey(group))
-//			return this.groupPermissions.get(group).hasPermission(permission);
-//		return false;
-//	}
-	
+		
 	private boolean			isOp(String user)
 	{
 		if (!UPermissions.instance.allowOps)
