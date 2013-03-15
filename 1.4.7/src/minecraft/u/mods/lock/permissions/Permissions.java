@@ -1,8 +1,8 @@
 package u.mods.lock.permissions;
 
-public class Permissions implements PersissionsInterface {
+public class Permissions implements PermissionsInterface {
 
-	public static PersissionsInterface Instance = new Permissions();
+	public static PermissionsInterface Instance = new Permissions();
 	private final static String[] permissions = {"-ulock.*"};
 
 	@Override

@@ -21,6 +21,7 @@ import net.minecraftforge.event.EventPriority;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public class EventHandler {
@@ -225,5 +226,10 @@ public class EventHandler {
 			}
 		}
 		return false;
+	}
+
+	public void test(PlayerEvent.BreakSpeed e)
+	{
+		e.entityPlayer.sendChatToPlayer("Breakspeed received: " + String.valueOf(e.originalSpeed) + " : " + String.valueOf(e.newSpeed));
 	}
 }
