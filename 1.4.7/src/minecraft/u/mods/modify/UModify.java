@@ -15,5 +15,6 @@ public class UModify
 	public void	postInit(FMLPostInitializationEvent event)
 	{
 		MinecraftForge.EVENT_BUS.register(new EntityEventHandler());
+		MinecraftForge.EVENT_BUS.register(new PlayerInteractEventHandler());
 	}
 }
