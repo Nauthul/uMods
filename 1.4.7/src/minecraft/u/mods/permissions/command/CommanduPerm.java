@@ -15,7 +15,7 @@ public class CommanduPerm extends CommandBase
 	@Override
 	public String getCommandName()
 	{
-		return "uperm";
+		return "upm";
 	}
 	
 	@Override
@@ -50,9 +50,12 @@ public class CommanduPerm extends CommandBase
 				sendResult(var1, handler.getResult());
 			}
 			else if (command.equalsIgnoreCase("group"))
-			{}
+			{
+				CommandHandlerGroup	handler = new CommandHandlerGroup(uname, params);
+				sendResult(var1, handler.getResult());
+			}
 			//TODO
-			else if (var2[0].equalsIgnoreCase("reload"))
+			else if (command.equalsIgnoreCase("reload"))
 			{
 				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.reload"))
 				{
@@ -63,9 +66,9 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
 			}
-			else if (var2[0].equalsIgnoreCase("promote"))
+			else if (command.equalsIgnoreCase("promote"))
 			{
-				if (var2.length == 2)
+				if (params.size() == 1)
 				{
 					if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.promote"))
 						var1.sendChatToPlayer(UPermissions.getController().promote(var2[1]));
@@ -75,9 +78,9 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cWrong arguments, usage: /" + getCommandName() + " promote <user>");
 			}
-			else if (var2[0].equalsIgnoreCase("demote"))
+			else if (command.equalsIgnoreCase("demote"))
 			{
-				if (var2.length == 2)
+				if (params.size() == 1)
 				{
 					if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.demote"))
 						var1.sendChatToPlayer(UPermissions.getController().demote(var2[1]));
@@ -87,7 +90,7 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cWrong arguments, usage: /" + getCommandName() + " demote <user>");
 			}
-			else if (var2[0].equalsIgnoreCase("ladder"))
+			else if (command.equalsIgnoreCase("ladder"))
 			{
 				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage"))
 				{
@@ -98,7 +101,7 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
 			}
-			else if (var2[0].equalsIgnoreCase("hierarchy"))
+			else if (command.equalsIgnoreCase("hierarchy"))
 			{
 				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage"))
 				{
@@ -112,14 +115,6 @@ public class CommanduPerm extends CommandBase
 			else
 				displayHelp(var1);
 		}
-		
-		if (var2.length > 0)
-		{
-
-
-		}
-		
-
 	}
 	
 	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)

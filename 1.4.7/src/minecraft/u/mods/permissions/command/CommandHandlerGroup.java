@@ -18,10 +18,26 @@ public class CommandHandlerGroup
 			else
 				this.result = UPermissions.getController().listGroups();
 		}
+		else
+		{}
+		/*
 		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
 		{}
-		else
-			this.result.add("\u00a7cUsage: /uperm users OR /uperm users list");
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		else if (params.size() == 1 && params.get(0).equalsIgnoreCase(""))
+		{}
+		*/
+		//else
+		//	this.result.add("\u00a7cUnknown command format. Type /upm for usage.");
 	
 	}
 	
