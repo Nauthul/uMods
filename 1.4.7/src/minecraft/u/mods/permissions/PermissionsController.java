@@ -434,6 +434,7 @@ public class PermissionsController
 		if (!this.userPermissions.containsKey(user))
 			addUser(user);
 		this.userPermissions.get(user).setGroup(group);
+		this.userPermissions.get(user).resetCache();
 		this.userGroup.put(user, group);
 		savePermissions();
 		return "User " + user + " is now a member of the group " + group + ".";

@@ -31,7 +31,7 @@ import cpw.mods.fml.common.discovery.asm.ASMModParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 
-@Mod(modid="uPermissions", name="uPermissions", version="1.0")
+@Mod(modid="uPermissions", name="uPermissions", version="1.0-Beta")
 public class UPermissions
 {
 	public boolean						allowOps;

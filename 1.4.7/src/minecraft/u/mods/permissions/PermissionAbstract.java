@@ -65,6 +65,11 @@ public abstract class PermissionAbstract
 		throw new PermissionNotFoundException();
 	}
 	
+	public void							resetCache()
+	{
+		this.cachedPermissions = new LinkedHashMap<String, Boolean>();
+	}
+	
 	protected HashMap<String, Boolean>	analyzePermissions(List<String> permissions)
 	{
 		HashMap<String, Boolean>	perms = new LinkedHashMap<String, Boolean>();
