@@ -30,7 +30,8 @@ public class CommanduPerm extends CommandBase
 		if (var2.length > 0)
 		{
 			String			uname = var1.getCommandSenderName();
-			List<String>	params = Arrays.asList(var2);
+			List<String>	params = new ArrayList<String>();
+			params.addAll(Arrays.asList(var2));
 			String			command = params.remove(0);
 			
 			if (command.equalsIgnoreCase("users"))
@@ -112,9 +113,9 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
 			}
-			else
-				displayHelp(var1);
 		}
+		else
+			displayHelp(var1);
 	}
 	
 	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender)
