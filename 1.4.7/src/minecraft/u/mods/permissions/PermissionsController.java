@@ -269,13 +269,6 @@ public class PermissionsController
 			return this.groupPermissions.get(group).getPrefix();
 		return "";
 	}
-
-	public String			getUserGroup(String user)
-	{
-		if (this.userGroup.containsKey(user))
-			return this.userGroup.get(user);
-		return this.defaultGroup;
-	}
 	
 	/*
 	 *  Setters
@@ -368,8 +361,16 @@ public class PermissionsController
 		return "Added user " + user + " to permissions.";
 	}
 
-	//	public void 			delUser(String user) throws Exception
-//	{}
+	public String 			delUser(String user)
+	{
+		user = user.toLowerCase();
+		if (this.userPermissions.containsKey(user))
+			this.userPermissions.remove(user);
+		if (this.userGroup.containsKey(user))
+			this.userGroup.remove(user);
+		savePermissions();
+		return "Removed user " + user +  " from permissions.";
+	}
 	
 	public List<String> 	listUsers()
 	{
@@ -387,14 +388,47 @@ public class PermissionsController
 	/*
 	 *  Users Permissions Management
 	 */
-//	public String 			addUserPerm(String user, String permission)
-//	{}
-//	public void 			delUserPerm(String user, String permission) throws Exception
-//	{}
+	public String 			addUserPerm(String user, String permission)
+	{
+		user = user.toLowerCase();
+		if (!this.userPermissions.containsKey(user))
+			addUser(user);
+		
+		PermissionUser				userPerms = this.userPermissions.get(user);
+		HashMap<String, Boolean>	perms = userPerms.getPermissions();
+		boolean 					value = true;
+		if (permission.startsWith("-"))
+		{
+			value = false;
+			permission = permission.substring(1);
+		}
+		perms.put(permission.toLowerCase(), value);
+		userPerms.settPermissions(perms);
+		savePermissions();
+		return "Set " + user + "'s permission " + permission + ": " + String.valueOf(value);
+	}
+	
+	public String 			delUserPerm(String user, String permission)
+	{
+		user = user.toLowerCase();
+		if (this.userPermissions.containsKey(user))
+		{
+			PermissionUser				userPerms = this.userPermissions.get(user);
+			permission = permission.toLowerCase();
+			if (userPerms.getPermissions().containsKey(permission))
+			{
+				userPerms.getPermissions().remove(permission);
+				savePermissions();
+			}
+		}
+		return "Deleted " + user + "'s permission " + permission;
+	}
 	
 	public String 			checkUserPerm(String user, String permission)
 	{
 		String res;
+		user = user.toLowerCase();
+		permission = permission.toLowerCase();
 		try {
 			boolean	result = hasPermissionThrow(user, permission);
 			res = "Player \"" + user + "\" have \"" + (result ? "" : "-") + permission + "\" = " + String.valueOf(result);
@@ -404,25 +438,34 @@ public class PermissionsController
 		res = "Player \"" + user + "\" don't have such permission.";
 		return res;
 	}
-	
-//	public List<String> 	listUserPerms(String user)
-//	{
+
+	//TODO
+	public List<String> 	listUserPerms(String user)
+	{
 //		user = user.toLowerCase();
-//
 //		List<String>	perms = new ArrayList();
+
 //		perms.add("Permissions for " + user + ":");
 //		if (this.userPermissions.containsKey(user))
 //		{
 //			
 //		}
 //		return perms;
-//	}
+		return null;
+	}
 	
 	/*
 	 *  Users Group Management
 	 */
-//	public String 			getUserGroup(String user)
-//	{}
+	public String 			getUserGroup(String user)
+	{
+		user = user.toLowerCase();
+		if (this.userGroup.containsKey(user))
+			return this.userGroup.get(user);
+		if (this.defaultGroup != null)
+			return this.defaultGroup;
+		return "";
+	}
 	
 	public String			setUserGroup(String user, String group)
 	{

@@ -22,6 +22,12 @@ public abstract class PermissionAbstract
 	public	List<String>				getInheritance()
 	{ return this.inheritance; }
 	
+	public HashMap<String, Boolean>		getPermissions()
+	{ return this.permissions; }
+	
+	public void		settPermissions(HashMap<String, Boolean> newPerms)
+	{ this.permissions = newPerms; }
+	
 	public boolean						hasPermission(String permission) throws PermissionNotFoundException
 	{
 		boolean	result = false;

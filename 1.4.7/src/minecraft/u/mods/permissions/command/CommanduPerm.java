@@ -1,5 +1,7 @@
 package u.mods.permissions.command;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import u.mods.permissions.UPermissions;
@@ -27,8 +29,30 @@ public class CommanduPerm extends CommandBase
 	{
 		if (var2.length > 0)
 		{
-			// Misc Commands
-			if (var2[0].equalsIgnoreCase("reload"))
+			String			uname = var1.getCommandSenderName();
+			List<String>	params = Arrays.asList(var2);
+			String			command = params.remove(0);
+			
+			if (command.equalsIgnoreCase("users"))
+			{
+				CommandHandlerUsers handler = new CommandHandlerUsers(uname, params);
+				sendResult(var1, handler.getResult());
+				
+			}
+			else if (command.equalsIgnoreCase("user"))
+			{
+				CommandHandlerUser	handler = new CommandHandlerUser(uname, params);
+				sendResult(var1, handler.getResult());
+			}
+			else if (command.equalsIgnoreCase("groups"))
+			{
+				CommandHandlerGroups	handler = new CommandHandlerGroups(uname, params);
+				sendResult(var1, handler.getResult());
+			}
+			else if (command.equalsIgnoreCase("group"))
+			{}
+			//TODO
+			else if (var2[0].equalsIgnoreCase("reload"))
 			{
 				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.reload"))
 				{
@@ -39,110 +63,6 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
 			}
-			// Listing Commands
-			else if (var2[0].equalsIgnoreCase("listusers"))
-			{
-				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.list"))
-				{
-					List<String>	users = UPermissions.getController().listUsers();
-					for (String line : users)
-						var1.sendChatToPlayer(line);
-				}
-				else
-					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
-			}
-			else if (var2[0].equalsIgnoreCase("listgroups"))
-			{
-				if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.groups.list"))
-				{
-					List<String>	groups = UPermissions.getController().listGroups();
-					for (String line : groups)
-						var1.sendChatToPlayer(line);
-				}
-				else
-					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
-			}
-/*			
-			//TODO
-			// Specific Listing Commands
-			else if (var2[0].equalsIgnoreCase("listuserperms"))
-			{
-				if (var2.length == 2)
-				{
-					if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.permissions.list"))
-					{}
-					else
-						var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
-				}
-				else
-					var1.sendChatToPlayer("\u00a7cWrong arguments, usage: /" + getCommandName() + " listuserperms <user>");
-
-			}
-			else if (var2[0].equalsIgnoreCase("listgroupperms"))
-			{}
-			else if (var2[0].equalsIgnoreCase("listgroupsusers"))
-			{}
-			// User Management Commands
-			else if (var2[0].equalsIgnoreCase("deluser"))
-			{}
-			else if (var2[0].equalsIgnoreCase("adduserperm"))
-			{}
-			else if (var2[0].equalsIgnoreCase("deluserperm"))
-			{}
-*/
-			else if (var2[0].equalsIgnoreCase("checkuserperm"))
-			{
-				if (var2.length == 3)
-				{
-					if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.permissions.check"))
-						var1.sendChatToPlayer(UPermissions.getController().checkUserPerm(var2[1], var2[2]));
-					else
-						var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
-				}
-				else
-					var1.sendChatToPlayer("\u00a7cWrong arguments, usage: /" + getCommandName() + " checkuserperm <user> <permission>");
-			}
-/*
-			else if (var2[0].equalsIgnoreCase("getusergroup"))
-			{}
-*/
-			else if (var2[0].equalsIgnoreCase("setusergroup"))
-			{
-				if (var2.length == 3)
-				{
-					if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.group"))
-						var1.sendChatToPlayer(UPermissions.getController().setUserGroup(var2[1], var2[2]));
-					else
-						var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
-				}
-				else
-					var1.sendChatToPlayer("\u00a7cWrong arguments, usage: /" + getCommandName() + " setusergroup <user> <group>");
-			}
-/*
-			// Group Management Commands
-			else if (var2[0].equalsIgnoreCase("addgroup"))
-			{}
-			else if (var2[0].equalsIgnoreCase("delgroup"))
-			{}
-			else if (var2[0].equalsIgnoreCase("addgroupperm"))
-			{}
-			else if (var2[0].equalsIgnoreCase("delgroupperm"))
-			{}
-			else if (var2[0].equalsIgnoreCase("checkgroupperm"))
-			{}
-			else if (var2[0].equalsIgnoreCase("getgroupprefix"))
-			{}
-			else if (var2[0].equalsIgnoreCase("setgroupprefix"))
-			{}
-			else if (var2[0].equalsIgnoreCase("getdefaultgroup"))
-			{}
-			else if (var2[0].equalsIgnoreCase("setdefaultgroup"))
-			{}
-			else if (var2[0].equalsIgnoreCase("getgrouprank"))
-			{}
-			else if (var2[0].equalsIgnoreCase("setgrouprank"))
-			{}
-*/
 			else if (var2[0].equalsIgnoreCase("promote"))
 			{
 				if (var2.length == 2)
@@ -189,10 +109,16 @@ public class CommanduPerm extends CommandBase
 				else
 					var1.sendChatToPlayer("\u00a7cYou do not have permission to use this command.");
 			}
+			else
+				displayHelp(var1);
+		}
+		
+		if (var2.length > 0)
+		{
+
 
 		}
-		else
-			displayHelp(var1);
+		
 
 	}
 	
@@ -206,45 +132,12 @@ public class CommanduPerm extends CommandBase
 	public void	displayHelp(ICommandSender var1)
 	{
 		var1.sendChatToPlayer("\u00a72--- uPermissions Help Page ---");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.reload"))
-			var1.sendChatToPlayer("/uperm reload");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.list"))
-			var1.sendChatToPlayer("/uperm listusers");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.groups.list"))
-			var1.sendChatToPlayer("/uperm listgroups");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.permissions.check"))
-			var1.sendChatToPlayer("/uperm checkuserperm <user> <permission>");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.group"))
-			var1.sendChatToPlayer("/uperm setusergroup <user> <group>");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.promote"))
-			var1.sendChatToPlayer("/uperm promote <user>");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage.users.demote"))
-			var1.sendChatToPlayer("/uperm promote <user>");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), ""))
-			var1.sendChatToPlayer("/uperm demote <user>");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage"))
-			var1.sendChatToPlayer("/uperm ladder");
-		if (UPermissions.getController().hasPermission(var1.getCommandSenderName(), "uperm.manage"))
-			var1.sendChatToPlayer("/uperm hierarchy");
-/*
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		var1.sendChatToPlayer("");
-		*/
+		var1.sendChatToPlayer("TODO");
+	}
+	
+	public void	sendResult(ICommandSender var1, List<String> result)
+	{
+		for (String line : result)
+			var1.sendChatToPlayer(line);
 	}
 }
