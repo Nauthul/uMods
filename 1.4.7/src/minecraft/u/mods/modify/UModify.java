@@ -11,9 +11,7 @@ public class UModify
 	@ServerStarting
 	public void	serverStarting(FMLServerStartingEvent event)
 	{
-		System.out.println("{WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF} 1");
 		MinecraftForge.EVENT_BUS.register(new EntityEventHandler());
 		MinecraftForge.EVENT_BUS.register(new PlayerInteractEventHandler());
-		System.out.println("{WTFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF} 2");
 	}
 }
