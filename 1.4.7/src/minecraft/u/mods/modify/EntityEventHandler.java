@@ -1,6 +1,7 @@
 package u.mods.modify;
 
 import u.mods.modify.permissions.Permissions;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -17,7 +18,7 @@ public class EntityEventHandler
 	 * umodify.damage.take.<entyty_name>
 	 */
 	@ForgeSubscribe
-	void	onPlayerIsAttacked(LivingAttackEvent event)
+	public void	onPlayerIsAttacked(LivingAttackEvent event)
 	{
 		if (event.entityLiving.worldObj.isRemote)
 			return;
@@ -45,9 +46,14 @@ public class EntityEventHandler
 		// EvP
 		else if (event.entityLiving instanceof EntityPlayer)
 		{
-			EntityPlayer	player = (EntityPlayer)event.source.getEntity();
-			String			entityType = EntityList.getEntityString(event.entityLiving).toLowerCase();
-			String			perm = "umodify.damage.take." + entityType;
+			EntityPlayer	player = (EntityPlayer)event.entityLiving;
+			Entity			src = event.source.getEntity();
+			String			entityType = "";
+			if (src != null)
+				entityType = EntityList.getEntityString(src);
+			if (entityType == null)
+				return;
+			String			perm = "umodify.damage.take." + entityType.toLowerCase();
 			if (!Permissions.Instance.hasPermission(player.username, perm.toLowerCase()))
 				event.setCanceled(true);
 		}

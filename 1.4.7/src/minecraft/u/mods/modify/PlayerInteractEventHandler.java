@@ -10,7 +10,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 public class PlayerInteractEventHandler
 {
 	@ForgeSubscribe
-	void	onPlayerInteract(PlayerInteractEvent event)
+	public void	onPlayerInteract(PlayerInteractEvent event)
 	{
 		if (event.entityPlayer.worldObj.isRemote)
 			return;
@@ -28,11 +28,12 @@ public class PlayerInteractEventHandler
 			{
 				event.useBlock = Event.Result.DENY;
 				event.setCanceled(true);
+				return;
 			}
-			else if (player.getHeldItem() != null)
+			if (player.getHeldItem() != null)
 			{
 				int itemID = player.getHeldItem().itemID;
-				if (	!Permissions.Instance.hasPermission(player.username, "umodify.items.use." + String.valueOf(itemID)) &&
+				if (	!Permissions.Instance.hasPermission(player.username, "umodify.items.use." + String.valueOf(itemID)) ||
 						!Permissions.Instance.hasPermission(player.username, "umodify.blocks.place." + String.valueOf(itemID)))
 				{
 					event.useItem = Event.Result.DENY;

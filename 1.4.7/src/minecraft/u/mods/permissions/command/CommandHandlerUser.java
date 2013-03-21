@@ -34,7 +34,7 @@ public class CommandHandlerUser
 			else if (params.size() == 2 && params.get(0).equalsIgnoreCase("group"))
 				handleSetGroup(user, paramuser, params.get(1));
 			else if (params.size() == 2 && params.get(0).equalsIgnoreCase("check"))
-				handleSetGroup(user, paramuser, params.get(1));
+				handleCheck(user, paramuser, params.get(1));
 			else
 				this.result.add("\u00a7cUnknown command format. Type /upm for usage.");;
 		}
@@ -93,10 +93,10 @@ public class CommandHandlerUser
 			this.result.add("\u00a7cYou do not have permission to use this command.");
 	}
 	
-	private void	handleCheck(String user, String paramuser, String group)
+	private void	handleCheck(String user, String paramuser, String perm)
 	{
 		if (UPermissions.getController().hasPermission(user, "uperm.manage." + paramuser))
-			this.result.add(UPermissions.getController().setUserGroup(paramuser, group));
+			this.result.add(UPermissions.getController().checkUserPerm(paramuser, perm));
 		else
 			this.result.add("\u00a7cYou do not have permission to use this command.");
 	}

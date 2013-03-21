@@ -1,7 +1,5 @@
 package u.mods.modify.permissions;
 
-
-
 public class Permissions implements PermissionsInterface
 {
 	public static PermissionsInterface Instance = new Permissions();

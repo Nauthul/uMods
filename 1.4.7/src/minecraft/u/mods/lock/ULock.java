@@ -23,8 +23,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid="uLock", name="uLock", version="1.0")
-@NetworkMod(clientSideRequired=false, serverSideRequired=true)
+@Mod(modid="uLock", name="uLock", version="1.0-Beta")
 public class ULock {
 	
 	public static MinecraftServer		server;
